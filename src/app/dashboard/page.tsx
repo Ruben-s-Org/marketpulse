@@ -117,6 +117,7 @@ export default function Dashboard() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState<string | null>(null);
+  const [portfolioValue, setPortfolioValue] = useState<number | null>(null);
 
   const fetchMarketData = useCallback(async () => {
     try {
@@ -173,6 +174,45 @@ export default function Dashboard() {
     const interval = setInterval(fetchMarketData, refreshRate);
     return () => clearInterval(interval);
   }, [fetchMarketData, user?.plan]);
+
+  useEffect(() => {
+    // Fetch portfolio summary
+    fetch('/api/portfolio')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (!data) return;
+        const portfolios = (data as { portfolios: Array<{ holdings: Array<{ symbol: string; asset_type: string; quantity: number; avg_buy_price: number }> }> }).portfolios;
+        const allHoldings = portfolios.flatMap((p: { holdings: Array<{ symbol: string; asset_type: string; quantity: number; avg_buy_price: number }> }) => p.holdings);
+        if (allHoldings.length === 0) return;
+
+        // Get prices for holdings
+        Promise.all([
+          fetch('/api/market/crypto').then(r => r.ok ? r.json() : []),
+          fetch('/api/market/stocks').then(r => r.ok ? r.json() : []),
+          fetch('/api/market/forex').then(r => r.ok ? r.json() : null),
+        ]).then(([cryptos, stocks, forex]) => {
+          const priceMap: Record<string, number> = {};
+          for (const c of (cryptos as Array<{ symbol: string; current_price: number }>)) {
+            priceMap[c.symbol.toUpperCase()] = c.current_price;
+          }
+          for (const s of (stocks as Array<{ symbol: string; price: number }>)) {
+            priceMap[s.symbol.toUpperCase()] = s.price;
+          }
+          if (forex && (forex as { rates: Record<string, number> }).rates) {
+            for (const [k, v] of Object.entries((forex as { rates: Record<string, number> }).rates)) {
+              priceMap[k.toUpperCase()] = v as number;
+            }
+          }
+          let total = 0;
+          for (const h of allHoldings) {
+            const price = priceMap[h.symbol.toUpperCase()] || 0;
+            total += h.quantity * price;
+          }
+          if (total > 0) setPortfolioValue(total);
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   async function handleUpgrade(plan: 'pro' | 'premium') {
     setUpgrading(plan);
@@ -271,6 +311,18 @@ export default function Dashboard() {
             <span className="text-sm text-slate-300 hidden sm:inline">{user.name}</span>
           </div>
           <a
+            href="/dashboard/portfolio"
+            className="text-sm text-slate-300 hover:text-white transition-colors"
+          >
+            Portfolio
+          </a>
+          <a
+            href="/dashboard/watchlist"
+            className="text-sm text-slate-300 hover:text-white transition-colors"
+          >
+            Watchlist
+          </a>
+          <a
             href="/dashboard/alerts"
             className="text-sm text-slate-300 hover:text-white transition-colors"
           >
@@ -296,6 +348,21 @@ export default function Dashboard() {
           <div className="mb-6 bg-amber-500/20 border border-amber-500/30 rounded-lg p-4 text-amber-300 text-sm">
             Checkout was cancelled. You can upgrade anytime.
           </div>
+        )}
+
+        {/* Portfolio Value Card */}
+        {portfolioValue !== null && (
+          <a href="/dashboard/portfolio" className="block mb-6">
+            <div className="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 border border-indigo-500/30 rounded-xl p-5 hover:border-indigo-500/50 transition-colors">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-indigo-300 mb-1">Portfolio Value</p>
+                  <p className="text-2xl font-bold">{formatMarketCap(portfolioValue)}</p>
+                </div>
+                <span className="text-slate-400 text-sm">View Portfolio &rarr;</span>
+              </div>
+            </div>
+          </a>
         )}
 
         {/* Market Overview Cards */}

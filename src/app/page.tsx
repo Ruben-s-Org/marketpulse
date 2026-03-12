@@ -100,7 +100,7 @@ export default function Home() {
           <a href="#pricing" className="text-sm text-slate-300 hover:text-white transition-colors">
             Pricing
           </a>
-          <a href="/tools/currency-converter" className="text-sm text-slate-300 hover:text-white transition-colors">
+          <a href="#tools" className="text-sm text-slate-300 hover:text-white transition-colors">
             Tools
           </a>
           <a href="/blog" className="text-sm text-slate-300 hover:text-white transition-colors">
@@ -442,6 +442,42 @@ export default function Home() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </section>
+
+        {/* Free Tools */}
+        <section id="tools" className="mt-28 sm:mt-32">
+          <p className="text-center text-sm font-medium text-indigo-400 mb-2 tracking-wide uppercase">
+            Free Tools
+          </p>
+          <h2 className="text-3xl font-bold text-center mb-4">
+            Powerful Financial Tools —{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">
+              100% Free
+            </span>
+          </h2>
+          <p className="text-center text-slate-400 mb-12 max-w-lg mx-auto">
+            No sign-up required. Use our free financial calculators and screeners to make smarter decisions.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              { name: "Currency Converter", desc: "Convert between 30+ world currencies with live exchange rates.", href: "/tools/currency-converter", icon: "💱" },
+              { name: "Crypto Calculator", desc: "Convert Bitcoin, Ethereum & more to fiat with live CoinGecko prices.", href: "/tools/crypto-calculator", icon: "₿" },
+              { name: "Profit Calculator", desc: "Calculate investment returns, compound interest, and P&L.", href: "/tools/profit-calculator", icon: "📊" },
+              { name: "Stock Screener", desc: "Filter stocks by price, market cap, sector, and performance.", href: "/tools/stock-screener", icon: "🔍" },
+              { name: "Forex Calculator", desc: "Position size and pip value calculator for forex traders.", href: "/tools/forex-calculator", icon: "📐" },
+              { name: "Crypto Fear & Greed", desc: "Live crypto market sentiment index with 30-day history.", href: "/tools/crypto-fear-greed", icon: "😱" },
+            ].map((tool) => (
+              <a
+                key={tool.name}
+                href={tool.href}
+                className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 hover:border-indigo-500/50 transition-colors group"
+              >
+                <span className="text-2xl mb-3 block">{tool.icon}</span>
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-indigo-400 transition-colors">{tool.name}</h3>
+                <p className="text-sm text-slate-400">{tool.desc}</p>
+              </a>
+            ))}
           </div>
         </section>
 

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Free Currency Converter — Real-Time Exchange Rates",
     description: "Convert between 20+ currencies with live ECB exchange rates. Free 30-day rate history chart.",
-    url: "https://marketpulse.app/tools/currency-converter",
+    url: "https://marketpulse-cxg.pages.dev/tools/currency-converter",
     type: "website",
   },
   twitter: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "Free Currency Converter — Real-Time Exchange Rates",
     description: "Convert between 20+ currencies with live ECB exchange rates.",
   },
-  alternates: { canonical: "https://marketpulse.app/tools/currency-converter" },
+  alternates: { canonical: "https://marketpulse-cxg.pages.dev/tools/currency-converter" },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             name: "MarketPulse Currency Converter",
-            url: "https://marketpulse.app/tools/currency-converter",
+            url: "https://marketpulse-cxg.pages.dev/tools/currency-converter",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             description: "Free real-time currency converter with 30-day rate history.",

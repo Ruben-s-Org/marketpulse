@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Free Investment Profit Calculator — ROI & P&L",
     description: "Calculate profit/loss, ROI, and break-even for any trade. Free calculator for stocks, crypto, and forex.",
-    url: "https://marketpulse.app/tools/profit-calculator",
+    url: "https://marketpulse-cxg.pages.dev/tools/profit-calculator",
     type: "website",
   },
   twitter: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "Free Investment Profit Calculator — ROI & P&L",
     description: "Calculate profit/loss, ROI, and break-even for any trade.",
   },
-  alternates: { canonical: "https://marketpulse.app/tools/profit-calculator" },
+  alternates: { canonical: "https://marketpulse-cxg.pages.dev/tools/profit-calculator" },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             name: "MarketPulse Investment Profit Calculator",
-            url: "https://marketpulse.app/tools/profit-calculator",
+            url: "https://marketpulse-cxg.pages.dev/tools/profit-calculator",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             description: "Free investment profit/loss and ROI calculator for stocks, crypto, and forex.",

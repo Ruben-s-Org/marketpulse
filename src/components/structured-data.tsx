@@ -7,7 +7,7 @@ export function OrganizationSchema() {
     operatingSystem: "Web",
     description:
       "Real-time financial intelligence platform. Track stocks, crypto, and forex in one dashboard with AI-powered insights and price alerts.",
-    url: "https://marketpulse.app",
+    url: "https://marketpulse-cxg.pages.dev",
     offers: [
       { "@type": "Offer", name: "Free", price: "0", priceCurrency: "USD" },
       { "@type": "Offer", name: "Pro", price: "9.99", priceCurrency: "USD" },
@@ -28,14 +28,14 @@ export function WebsiteSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "MarketPulse",
-    url: "https://marketpulse.app",
+    url: "https://marketpulse-cxg.pages.dev",
     description:
       "Free real-time market dashboard for stocks, crypto, and forex.",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://marketpulse.app/search?q={search_term_string}",
+        urlTemplate: "https://marketpulse-cxg.pages.dev/search?q={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },
@@ -67,12 +67,12 @@ export function BlogPostSchema({
     "@type": "Article",
     headline: title,
     description,
-    image: `https://marketpulse.app${image}`,
+    image: `https://marketpulse-cxg.pages.dev${image}`,
     datePublished: date,
     dateModified: date,
-    author: { "@type": "Organization", name: "MarketPulse", url: "https://marketpulse.app" },
-    publisher: { "@type": "Organization", name: "MarketPulse", url: "https://marketpulse.app" },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://marketpulse.app/blog/${slug}` },
+    author: { "@type": "Organization", name: "MarketPulse", url: "https://marketpulse-cxg.pages.dev" },
+    publisher: { "@type": "Organization", name: "MarketPulse", url: "https://marketpulse-cxg.pages.dev" },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://marketpulse-cxg.pages.dev/blog/${slug}` },
   };
 
   return (
@@ -91,7 +91,7 @@ export function BreadcrumbSchema({ items }: { items: { name: string; url: string
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: `https://marketpulse.app${item.url}`,
+      item: `https://marketpulse-cxg.pages.dev${item.url}`,
     })),
   };
 

@@ -12,7 +12,7 @@ export const landingPageMetadata: Metadata = {
   openGraph: {
     title: "MarketPulse — Free Real-Time Market Dashboard",
     description: "Track stocks, crypto, and forex in one free dashboard. Real-time data, custom alerts, and AI insights.",
-    url: "https://marketpulse.app",
+    url: "https://marketpulse-cxg.pages.dev",
     siteName: "MarketPulse",
     type: "website",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MarketPulse Dashboard" }],
@@ -29,7 +29,7 @@ export const landingPageMetadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
-  alternates: { canonical: "https://marketpulse.app" },
+  alternates: { canonical: "https://marketpulse-cxg.pages.dev" },
 };
 
 export const blogIndexMetadata: Metadata = {
@@ -38,7 +38,7 @@ export const blogIndexMetadata: Metadata = {
   openGraph: {
     title: "MarketPulse Blog — Investing Tips & Market Analysis",
     description: "Free guides on stock screening, crypto trading, and portfolio management.",
-    url: "https://marketpulse.app/blog",
+    url: "https://marketpulse-cxg.pages.dev/blog",
     type: "website",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MarketPulse Blog" }],
   },
@@ -53,5 +53,5 @@ export const blogIndexMetadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
-  alternates: { canonical: "https://marketpulse.app/blog" },
+  alternates: { canonical: "https://marketpulse-cxg.pages.dev/blog" },
 };

@@ -4,4 +4,4 @@ Disallow: /api/
 Disallow: /dashboard/
 Disallow: /_next/
 
-Sitemap: https://marketpulse.app/sitemap.xml
+Sitemap: https://marketpulse-cxg.pages.dev/sitemap.xml

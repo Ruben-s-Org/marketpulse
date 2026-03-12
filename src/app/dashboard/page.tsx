@@ -517,18 +517,19 @@ export default function Dashboard() {
                     <th className="text-right px-4 py-3 font-medium">24h %</th>
                     <th className="text-right px-4 py-3 font-medium hidden md:table-cell">Market Cap</th>
                     <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Volume</th>
-                    <th className="text-right px-4 py-3 font-medium hidden md:table-cell">7d Chart</th>
+                    <th className="text-right px-4 py-3 font-medium hidden md:table-cell">7d Trend</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredCryptos.map((c, i) => (
-                    <tr key={c.id} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                    <tr key={c.id} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors cursor-pointer" onClick={() => window.location.href = `/dashboard/chart/${c.id}`}>
                       <td className="px-4 py-3 text-xs text-slate-500">{i + 1}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <img src={c.image} alt={c.name} className="w-6 h-6 rounded-full" />
                           <span className="font-medium text-sm">{c.name}</span>
                           <span className="text-xs text-slate-500 uppercase">{c.symbol}</span>
+                          <svg className="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                         </div>
                       </td>
                       <td className="px-4 py-3 text-right text-sm font-medium">{formatPrice(c.current_price)}</td>

@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: post.title,
       description: post.metaDescription,
     },
-    alternates: { canonical: `https://marketpulse.app/blog/${slug}` },
+    alternates: { canonical: `https://marketpulse-cxg.pages.dev/blog/${slug}` },
   };
 }
 
@@ -49,20 +49,20 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: {
       "@type": "Organization",
       name: "MarketPulse",
-      url: "https://marketpulse.app",
+      url: "https://marketpulse-cxg.pages.dev",
     },
     publisher: {
       "@type": "Organization",
       name: "MarketPulse",
-      url: "https://marketpulse.app",
+      url: "https://marketpulse-cxg.pages.dev",
       logo: {
         "@type": "ImageObject",
-        url: "https://marketpulse.app/logo.png",
+        url: "https://marketpulse-cxg.pages.dev/logo.png",
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://marketpulse.app/blog/${post.slug}`,
+      "@id": `https://marketpulse-cxg.pages.dev/blog/${post.slug}`,
     },
   };
 
@@ -70,9 +70,9 @@ export default async function BlogPostPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://marketpulse.app" },
-      { "@type": "ListItem", position: 2, name: "Blog", item: "https://marketpulse.app/blog" },
-      { "@type": "ListItem", position: 3, name: post.title, item: `https://marketpulse.app/blog/${post.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://marketpulse-cxg.pages.dev" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://marketpulse-cxg.pages.dev/blog" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://marketpulse-cxg.pages.dev/blog/${post.slug}` },
     ],
   };
 
@@ -208,8 +208,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm text-slate-500">
           <span>MarketPulse 2026. All rights reserved.</span>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-slate-300 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-slate-300 transition-colors">Terms</a>
+            <a href="/privacy" className="hover:text-slate-300 transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-slate-300 transition-colors">Terms</a>
           </div>
         </div>
       </footer>

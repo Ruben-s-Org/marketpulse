@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: "https://marketpulse.com/blog",
+    canonical: "https://marketpulse-cxg.pages.dev/blog",
   },
 };
 

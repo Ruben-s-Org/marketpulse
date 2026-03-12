@@ -48,7 +48,12 @@ export default function BlogPage() {
                     <span className="text-xs text-slate-500">{post.readTime}</span>
                   </div>
                   <p className="text-sm text-slate-400 line-clamp-3">{post.excerpt}</p>
-                  <div className="mt-4 text-sm text-indigo-400 group-hover:text-indigo-300 transition-colors">Read more &rarr;</div>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-slate-500">
+                      {new Date(post.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })} · MarketPulse Team
+                    </span>
+                    <span className="text-sm text-indigo-400 group-hover:text-indigo-300 transition-colors">Read more &rarr;</span>
+                  </div>
                 </div>
               </article>
             </Link>
@@ -60,8 +65,8 @@ export default function BlogPage() {
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm text-slate-500">
           <span>MarketPulse 2026. All rights reserved.</span>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-slate-300 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-slate-300 transition-colors">Terms</a>
+            <a href="/privacy" className="hover:text-slate-300 transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-slate-300 transition-colors">Terms</a>
           </div>
         </div>
       </footer>

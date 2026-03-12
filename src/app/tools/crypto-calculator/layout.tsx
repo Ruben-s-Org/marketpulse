@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Free Crypto Calculator — Live Bitcoin & Ethereum Prices",
     description: "Convert crypto to fiat with live CoinGecko prices. 24h change, market cap, and volume included.",
-    url: "https://marketpulse.app/tools/crypto-calculator",
+    url: "https://marketpulse-cxg.pages.dev/tools/crypto-calculator",
     type: "website",
   },
   twitter: {
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "Free Crypto Calculator — Live Bitcoin & Ethereum Prices",
     description: "Convert crypto to fiat with live CoinGecko prices.",
   },
-  alternates: { canonical: "https://marketpulse.app/tools/crypto-calculator" },
+  alternates: { canonical: "https://marketpulse-cxg.pages.dev/tools/crypto-calculator" },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             "@context": "https://schema.org",
             "@type": "WebApplication",
             name: "MarketPulse Crypto Calculator",
-            url: "https://marketpulse.app/tools/crypto-calculator",
+            url: "https://marketpulse-cxg.pages.dev/tools/crypto-calculator",
             applicationCategory: "FinanceApplication",
             operatingSystem: "Web",
             description: "Free cryptocurrency calculator with live prices from CoinGecko.",

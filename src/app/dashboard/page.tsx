@@ -205,6 +205,12 @@ export default function Dashboard() {
             <span className="text-sm text-slate-300 hidden sm:inline">{user.name}</span>
           </div>
           <a
+            href="/dashboard/alerts"
+            className="text-sm text-slate-300 hover:text-white transition-colors"
+          >
+            Alerts
+          </a>
+          <a
             href="/api/auth/logout"
             className="text-sm text-slate-400 hover:text-white transition-colors"
           >

@@ -1,147 +1,201 @@
-import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import Link from "next/link";
-import { BlogPostSchema } from "@/components/structured-data";
-import type { Metadata } from "next";
-import { readFileSync } from "fs";
-import { join } from "path";
+import { notFound } from "next/navigation";
+import { blogPosts } from "@/data/blog-posts";
 
-interface BlogPostData {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  category: string;
-  image: string;
+interface PageProps {
+  params: Promise<{ slug: string }>;
 }
 
-const posts: Record<string, BlogPostData> = {
-  "best-free-stock-screeners-2026": {
-    slug: "best-free-stock-screeners-2026",
-    title: "Best Free Stock Screeners in 2026: Find Winning Trades Faster",
-    description: "Compare the top free stock screeners in 2026. Filter stocks by price, volume, market cap, and technical indicators.",
-    date: "2026-03-12",
-    category: "Investing Tools",
-    image: "/blog/stock-screener-hero.png",
-  },
-  "how-to-set-up-crypto-price-alerts": {
-    slug: "how-to-set-up-crypto-price-alerts",
-    title: "How to Set Up Crypto Price Alerts (Step-by-Step Guide)",
-    description: "Learn how to set up free crypto price alerts for Bitcoin, Ethereum, and altcoins.",
-    date: "2026-03-12",
-    category: "Crypto",
-    image: "/blog/crypto-alerts-hero.png",
-  },
-  "real-time-market-dashboard": {
-    slug: "real-time-market-dashboard",
-    title: "Real-Time Market Dashboard: Track Stocks, Crypto & Forex in One Place",
-    description: "Stop switching between apps. Get real-time stock quotes, crypto prices, and forex rates in a single dashboard.",
-    date: "2026-03-12",
-    category: "Product",
-    image: "/blog/dashboard-hero.png",
-  },
-};
-
-export async function generateStaticParams() {
-  return Object.keys(posts).map((slug) => ({ slug }));
+export function generateStaticParams() {
+  return blogPosts.map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = posts[slug];
-  if (!post) return {};
+  const post = blogPosts.find((p) => p.slug === slug);
+  if (!post) return { title: "Post Not Found" };
 
   return {
-    title: `${post.title} | MarketPulse Blog`,
-    description: post.description,
+    title: `${post.title} — MarketPulse Blog`,
+    description: post.metaDescription,
     openGraph: {
       title: post.title,
-      description: post.description,
-      url: `https://marketpulse.app/blog/${post.slug}`,
+      description: post.metaDescription,
       type: "article",
-      publishedTime: post.date,
-      images: [{ url: post.image, width: 1200, height: 630 }],
+      publishedTime: post.publishedAt,
+      tags: post.tags,
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.description,
-      images: [post.image],
+      description: post.metaDescription,
     },
-    alternates: { canonical: `https://marketpulse.app/blog/${post.slug}` },
   };
 }
 
-function getMarkdownContent(slug: string): string {
-  try {
-    const filePath = join(process.cwd(), "content", "blog", `${slug}.md`);
-    const raw = readFileSync(filePath, "utf-8");
-    // Strip frontmatter
-    const content = raw.replace(/^---[\s\S]*?---\n/, "");
-    return content;
-  } catch {
-    return "";
-  }
-}
-
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = posts[slug];
+  const post = blogPosts.find((p) => p.slug === slug);
   if (!post) notFound();
 
-  const content = getMarkdownContent(slug);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.metaDescription,
+    datePublished: post.publishedAt,
+    author: {
+      "@type": "Organization",
+      name: "MarketPulse",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "MarketPulse",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://marketpulse.com/logo.png",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://marketpulse.com/blog/${post.slug}`,
+    },
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white">
-      <BlogPostSchema title={post.title} description={post.description} slug={post.slug} date={post.date} image={post.image} />
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
+      {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center font-bold text-sm">MP</div>
           <span className="text-xl font-bold">MarketPulse</span>
         </Link>
         <div className="flex items-center gap-6">
+          <Link href="/#features" className="text-sm text-slate-300 hover:text-white transition-colors">Features</Link>
+          <Link href="/#pricing" className="text-sm text-slate-300 hover:text-white transition-colors">Pricing</Link>
           <Link href="/blog" className="text-sm text-slate-300 hover:text-white transition-colors">Blog</Link>
-          <button className="bg-indigo-600 hover:bg-indigo-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Sign In</button>
+          <a href="/api/auth/google" className="bg-indigo-600 hover:bg-indigo-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors inline-block">Sign In</a>
         </div>
       </nav>
 
-      <article className="max-w-3xl mx-auto px-6 py-16">
-        <header className="mb-10">
-          <Link href="/blog" className="text-sm text-indigo-400 hover:text-indigo-300 mb-4 inline-block">&larr; Back to Blog</Link>
-          <span className="block text-xs font-medium text-indigo-400 uppercase tracking-wider mt-4">{post.category}</span>
-          <h1 className="text-4xl font-bold mt-2 mb-4">{post.title}</h1>
-          <p className="text-slate-400 text-lg">{post.description}</p>
-          <time className="block mt-4 text-sm text-slate-500">
-            {new Date(post.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-          </time>
+      <main className="max-w-4xl mx-auto px-6 pt-8 pb-32">
+        {/* Breadcrumbs */}
+        <nav className="flex items-center gap-2 text-sm text-slate-500 mb-8">
+          <Link href="/" className="hover:text-slate-300 transition-colors">Home</Link>
+          <span>/</span>
+          <Link href="/blog" className="hover:text-slate-300 transition-colors">Blog</Link>
+          <span>/</span>
+          <span className="text-slate-400 truncate max-w-xs">{post.title}</span>
+        </nav>
+
+        {/* Post Header */}
+        <header className="mb-12">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-xs font-medium bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full">{post.category}</span>
+            <span className="text-xs text-slate-500">{post.readTime}</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4">{post.title}</h1>
+          <p className="text-lg text-slate-400 mb-6">{post.excerpt}</p>
+          <div className="flex items-center gap-4 text-sm text-slate-500">
+            <span>By MarketPulse Team</span>
+            <span>&middot;</span>
+            <time dateTime={post.publishedAt}>
+              {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+          </div>
         </header>
 
-        <div className="prose prose-invert prose-indigo max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-indigo-400 prose-strong:text-white prose-li:text-slate-300">
-          {/* Render raw markdown content as pre-formatted for now.
-              TODO: Add remark/rehype or next-mdx-remote for proper markdown rendering */}
-          <div className="whitespace-pre-wrap text-slate-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: simpleMarkdownToHtml(content) }} />
+        {/* Gradient Banner */}
+        <div
+          className="h-2 rounded-full mb-12"
+          style={{
+            background: `linear-gradient(90deg, ${post.ogGradient.from}, ${post.ogGradient.to})`,
+          }}
+        />
+
+        {/* Post Content */}
+        <article
+          className="prose prose-invert prose-lg max-w-none
+            prose-headings:font-bold prose-headings:text-white
+            prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-4
+            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+            prose-p:text-slate-300 prose-p:leading-relaxed
+            prose-li:text-slate-300
+            prose-strong:text-white
+            prose-a:text-indigo-400 prose-a:no-underline hover:prose-a:text-indigo-300
+            prose-ul:my-4 prose-ol:my-4
+            prose-table:border-collapse prose-th:bg-slate-800/50 prose-th:p-3 prose-th:text-left prose-th:border prose-th:border-slate-700
+            prose-td:p-3 prose-td:border prose-td:border-slate-700
+          "
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
+
+        {/* CTA Section */}
+        <div className="mt-16 p-8 bg-slate-800/50 border border-slate-700/50 rounded-xl text-center">
+          <h2 className="text-2xl font-bold mb-3">Ready to trade smarter?</h2>
+          <p className="text-slate-400 mb-6 max-w-lg mx-auto">
+            MarketPulse gives you real-time data, AI insights, and portfolio tracking — everything you need in one dashboard.
+          </p>
+          <a
+            href="/api/auth/google"
+            className="bg-indigo-600 hover:bg-indigo-500 font-medium px-6 py-3 rounded-lg transition-colors inline-block"
+          >
+            Get Started Free
+          </a>
         </div>
 
-        <div className="mt-16 p-8 bg-indigo-950/50 border border-indigo-500/30 rounded-xl text-center">
-          <h2 className="text-2xl font-bold mb-3">Ready to track the markets?</h2>
-          <p className="text-slate-400 mb-6">Get real-time stocks, crypto, and forex data in one free dashboard.</p>
-          <Link href="/" className="inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-3 rounded-lg transition-colors">
-            Try MarketPulse Free
-          </Link>
+        {/* Related Posts */}
+        <div className="mt-16">
+          <h2 className="text-2xl font-bold mb-8">More from the blog</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {blogPosts
+              .filter((p) => p.slug !== post.slug)
+              .slice(0, 2)
+              .map((related) => (
+                <Link key={related.slug} href={`/blog/${related.slug}`} className="group">
+                  <article className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden hover:border-indigo-500/50 transition-colors">
+                    <div
+                      className="h-32 flex items-center justify-center p-4"
+                      style={{
+                        background: `linear-gradient(135deg, ${related.ogGradient.from}, ${related.ogGradient.to})`,
+                      }}
+                    >
+                      <h3 className="text-sm font-bold text-white text-center leading-snug">{related.title}</h3>
+                    </div>
+                    <div className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-medium bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">{related.category}</span>
+                        <span className="text-xs text-slate-500">{related.readTime}</span>
+                      </div>
+                      <p className="text-xs text-slate-400 line-clamp-2">{related.excerpt}</p>
+                    </div>
+                  </article>
+                </Link>
+              ))}
+          </div>
         </div>
-      </article>
+      </main>
+
+      <footer className="border-t border-slate-800 py-8">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm text-slate-500">
+          <span>MarketPulse 2026. All rights reserved.</span>
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-slate-300 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-slate-300 transition-colors">Terms</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
-}
-
-function simpleMarkdownToHtml(md: string): string {
-  return md
-    .replace(/^### (.+)$/gm, '<h3 class="text-xl font-semibold mt-8 mb-3">$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-bold mt-10 mb-4">$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1 class="text-3xl font-bold mt-10 mb-4">$1</h1>')
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-indigo-400 hover:text-indigo-300 underline">$1</a>')
-    .replace(/^\- (.+)$/gm, '<li class="ml-4">$1</li>')
-    .replace(/^(?!<[h|l|u|o|d])((?!^\s*$).+)$/gm, '<p class="mb-4">$1</p>')
-    .replace(/\n{2,}/g, "\n");
 }

@@ -42,6 +42,35 @@ async function fetchCryptoPrices(): Promise<Map<string, number>> {
   return prices;
 }
 
+interface YahooChartResponse {
+  chart: {
+    result: Array<{ meta: { symbol: string; regularMarketPrice: number } }> | null;
+  };
+}
+
+async function fetchStockPrices(symbols: string[]): Promise<Map<string, number>> {
+  const prices = new Map<string, number>();
+  // Batch fetch in groups of 5
+  for (let i = 0; i < symbols.length; i += 5) {
+    const batch = symbols.slice(i, i + 5);
+    const results = await Promise.allSettled(
+      batch.map(async (symbol) => {
+        const res = await fetch(
+          `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`,
+          { headers: { 'User-Agent': 'MarketPulse-AlertChecker/1.0' } }
+        );
+        if (!res.ok) return null;
+        const data = (await res.json()) as YahooChartResponse;
+        const price = data.chart.result?.[0]?.meta?.regularMarketPrice;
+        if (price !== undefined) prices.set(symbol.toUpperCase(), price);
+        return null;
+      })
+    );
+    void results;
+  }
+  return prices;
+}
+
 async function fetchForexRates(): Promise<Map<string, number>> {
   const prices = new Map<string, number>();
   try {
@@ -102,10 +131,16 @@ export default {
 
     if (!alertsResult.results || alertsResult.results.length === 0) return;
 
+    // Collect stock symbols from alerts
+    const stockSymbols = alertsResult.results
+      .filter((a) => a.asset_type === 'stock')
+      .map((a) => a.symbol.toUpperCase());
+
     // Fetch current prices
-    const [cryptoPrices, forexRates] = await Promise.all([
+    const [cryptoPrices, forexRates, stockPrices] = await Promise.all([
       fetchCryptoPrices(),
       fetchForexRates(),
+      stockSymbols.length > 0 ? fetchStockPrices(Array.from(new Set(stockSymbols))) : Promise.resolve(new Map<string, number>()),
     ]);
 
     const now = new Date().toISOString();
@@ -118,6 +153,8 @@ export default {
         currentPrice = cryptoPrices.get(alert.symbol.toUpperCase());
       } else if (alert.asset_type === 'forex') {
         currentPrice = forexRates.get(alert.symbol.toUpperCase());
+      } else if (alert.asset_type === 'stock') {
+        currentPrice = stockPrices.get(alert.symbol.toUpperCase());
       }
 
       if (currentPrice === undefined) continue;

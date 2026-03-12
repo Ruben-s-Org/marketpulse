@@ -28,13 +28,33 @@ interface CryptoAsset {
   sparkline_in_7d?: { price: number[] };
 }
 
+interface StockQuote {
+  symbol: string;
+  name: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  volume: number;
+  marketCap: number;
+  previousClose: number;
+  dayHigh: number;
+  dayLow: number;
+}
+
+interface StockSearchResult {
+  symbol: string;
+  name: string;
+  type: string;
+  exchange: string;
+}
+
 interface ForexData {
   base: string;
   date: string;
   rates: Record<string, number>;
 }
 
-type TabType = 'crypto' | 'forex';
+type TabType = 'crypto' | 'stocks' | 'forex';
 
 function formatPrice(price: number): string {
   if (price >= 1) return price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -77,23 +97,42 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [cryptos, setCryptos] = useState<CryptoAsset[]>([]);
+  const [stocks, setStocks] = useState<StockQuote[]>([]);
   const [forex, setForex] = useState<ForexData | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('crypto');
   const [searchQuery, setSearchQuery] = useState('');
+  const [stockSearchQuery, setStockSearchQuery] = useState('');
+  const [stockSearchResults, setStockSearchResults] = useState<StockSearchResult[]>([]);
+  const [stockSearching, setStockSearching] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [upgrading, setUpgrading] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState<string | null>(null);
 
   const fetchMarketData = useCallback(async () => {
     try {
-      const [cryptoRes, forexRes] = await Promise.all([
+      const [cryptoRes, stocksRes, forexRes] = await Promise.all([
         fetch('/api/market/crypto'),
+        fetch('/api/market/stocks'),
         fetch('/api/market/forex'),
       ]);
       if (cryptoRes.ok) setCryptos((await cryptoRes.json()) as CryptoAsset[]);
+      if (stocksRes.ok) setStocks((await stocksRes.json()) as StockQuote[]);
       if (forexRes.ok) setForex((await forexRes.json()) as ForexData);
       setLastUpdated(new Date());
     } catch { /* silent */ }
+  }, []);
+
+  const searchStocks = useCallback(async (query: string) => {
+    if (query.length < 1) {
+      setStockSearchResults([]);
+      return;
+    }
+    setStockSearching(true);
+    try {
+      const res = await fetch(`/api/market/stocks/search?q=${encodeURIComponent(query)}`);
+      if (res.ok) setStockSearchResults((await res.json()) as StockSearchResult[]);
+    } catch { /* silent */ }
+    setStockSearching(false);
   }, []);
 
   useEffect(() => {
@@ -233,7 +272,7 @@ export default function Dashboard() {
         )}
 
         {/* Market Overview Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
           {cryptos.slice(0, 3).map((c) => (
             <div key={c.id} className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
               <div className="flex items-center gap-2 mb-2">
@@ -246,6 +285,18 @@ export default function Dashboard() {
               </p>
             </div>
           ))}
+          {stocks.length > 0 && (
+            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-[8px] font-bold text-indigo-400">S</div>
+                <p className="text-xs text-slate-400">{stocks[0].symbol}</p>
+              </div>
+              <p className="text-lg font-bold">{formatPrice(stocks[0].price)}</p>
+              <p className={`text-xs font-medium ${stocks[0].changePercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {stocks[0].changePercent >= 0 ? '+' : ''}{stocks[0].changePercent.toFixed(2)}%
+              </p>
+            </div>
+          )}
           {forex && (
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4">
               <p className="text-xs text-slate-400 mb-2">EUR/USD</p>
@@ -287,6 +338,14 @@ export default function Dashboard() {
               Crypto
             </button>
             <button
+              onClick={() => setActiveTab('stocks')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                activeTab === 'stocks' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Stocks
+            </button>
+            <button
               onClick={() => setActiveTab('forex')}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
                 activeTab === 'forex' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
@@ -303,6 +362,51 @@ export default function Dashboard() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-64"
             />
+          )}
+          {activeTab === 'stocks' && (
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search stocks (e.g. AAPL, Tesla)..."
+                value={stockSearchQuery}
+                onChange={(e) => {
+                  setStockSearchQuery(e.target.value);
+                  searchStocks(e.target.value);
+                }}
+                className="bg-slate-800/50 border border-slate-700/50 rounded-lg px-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-72"
+              />
+              {stockSearchResults.length > 0 && stockSearchQuery && (
+                <div className="absolute top-full mt-1 w-72 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-10 max-h-64 overflow-y-auto">
+                  {stockSearchResults.map((r) => (
+                    <button
+                      key={r.symbol}
+                      onClick={async () => {
+                        setStockSearchQuery('');
+                        setStockSearchResults([]);
+                        const res = await fetch(`/api/market/stocks?search=${encodeURIComponent(r.symbol)}`);
+                        if (res.ok) {
+                          const newQuotes = (await res.json()) as StockQuote[];
+                          setStocks((prev) => {
+                            const existing = new Set(prev.map((s) => s.symbol));
+                            return [...prev, ...newQuotes.filter((q) => !existing.has(q.symbol))];
+                          });
+                        }
+                      }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-slate-700/50 transition-colors border-b border-slate-700/30 last:border-b-0"
+                    >
+                      <span className="text-sm font-medium text-white">{r.symbol}</span>
+                      <span className="text-xs text-slate-400 ml-2">{r.name}</span>
+                      <span className="text-xs text-slate-500 ml-1">({r.exchange})</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              {stockSearching && (
+                <div className="absolute right-3 top-2.5">
+                  <div className="w-4 h-4 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+            </div>
           )}
         </div>
 
@@ -364,6 +468,63 @@ export default function Dashboard() {
               <div className="text-center py-12 text-slate-500">
                 {cryptos.length === 0 ? 'Loading crypto data...' : 'No results found'}
               </div>
+            )}
+          </div>
+        )}
+
+        {/* Stocks Table */}
+        {activeTab === 'stocks' && (
+          <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden mb-8">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-slate-700/50 text-xs text-slate-400">
+                    <th className="text-left px-4 py-3 font-medium">#</th>
+                    <th className="text-left px-4 py-3 font-medium">Symbol</th>
+                    <th className="text-right px-4 py-3 font-medium">Price</th>
+                    <th className="text-right px-4 py-3 font-medium">Change</th>
+                    <th className="text-right px-4 py-3 font-medium">% Change</th>
+                    <th className="text-right px-4 py-3 font-medium hidden md:table-cell">Volume</th>
+                    <th className="text-right px-4 py-3 font-medium hidden lg:table-cell">Day Range</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stocks.map((s, i) => (
+                    <tr key={s.symbol} className="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+                      <td className="px-4 py-3 text-xs text-slate-500">{i + 1}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-indigo-500/20 flex items-center justify-center text-[10px] font-bold text-indigo-400">
+                            {s.symbol.slice(0, 2)}
+                          </div>
+                          <span className="font-medium text-sm">{s.name}</span>
+                          <span className="text-xs text-slate-500">{s.symbol}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm font-medium">{formatPrice(s.price)}</td>
+                      <td className={`px-4 py-3 text-right text-sm font-medium ${
+                        s.change >= 0 ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        {s.change >= 0 ? '+' : ''}{s.change.toFixed(2)}
+                      </td>
+                      <td className={`px-4 py-3 text-right text-sm font-medium ${
+                        s.changePercent >= 0 ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        {s.changePercent >= 0 ? '+' : ''}{s.changePercent.toFixed(2)}%
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-slate-300 hidden md:table-cell">
+                        {s.volume > 0 ? formatMarketCap(s.volume) : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-right text-sm text-slate-300 hidden lg:table-cell">
+                        {formatPrice(s.dayLow)} — {formatPrice(s.dayHigh)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {stocks.length === 0 && (
+              <div className="text-center py-12 text-slate-500">Loading stock data...</div>
             )}
           </div>
         )}

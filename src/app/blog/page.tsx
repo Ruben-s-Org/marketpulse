@@ -1,67 +1,70 @@
+import { Metadata } from "next";
 import Link from "next/link";
-import { blogIndexMetadata } from "@/lib/metadata";
-import type { Metadata } from "next";
+import { blogPosts } from "@/data/blog-posts";
 
-export const metadata: Metadata = blogIndexMetadata;
-
-const posts = [
-  {
-    slug: "best-free-stock-screeners-2026",
-    title: "Best Free Stock Screeners in 2026: Find Winning Trades Faster",
-    description: "Compare the top free stock screeners in 2026. Filter stocks by price, volume, market cap, and technical indicators.",
-    date: "2026-03-12",
-    category: "Investing Tools",
+export const metadata: Metadata = {
+  title: "MarketPulse Blog — Financial Markets Insights & Guides",
+  description: "Expert guides on stocks, crypto, forex trading, and financial tools. Learn to invest smarter with MarketPulse.",
+  openGraph: {
+    title: "MarketPulse Blog — Financial Markets Insights & Guides",
+    description: "Expert guides on stocks, crypto, forex trading, and financial tools.",
+    type: "website",
   },
-  {
-    slug: "how-to-set-up-crypto-price-alerts",
-    title: "How to Set Up Crypto Price Alerts (Step-by-Step Guide)",
-    description: "Learn how to set up free crypto price alerts for Bitcoin, Ethereum, and altcoins.",
-    date: "2026-03-12",
-    category: "Crypto",
-  },
-  {
-    slug: "real-time-market-dashboard",
-    title: "Real-Time Market Dashboard: Track Stocks, Crypto & Forex in One Place",
-    description: "Stop switching between apps. Get real-time stock quotes, crypto prices, and forex rates in a single dashboard.",
-    date: "2026-03-12",
-    category: "Product",
-  },
-];
+};
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white">
+      {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center font-bold text-sm">MP</div>
           <span className="text-xl font-bold">MarketPulse</span>
         </Link>
         <div className="flex items-center gap-6">
-          <Link href="/blog" className="text-sm text-indigo-400 font-medium">Blog</Link>
+          <Link href="/#features" className="text-sm text-slate-300 hover:text-white transition-colors">Features</Link>
           <Link href="/#pricing" className="text-sm text-slate-300 hover:text-white transition-colors">Pricing</Link>
-          <button className="bg-indigo-600 hover:bg-indigo-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Sign In</button>
+          <Link href="/blog" className="text-sm text-white font-medium">Blog</Link>
+          <a href="/api/auth/google" className="bg-indigo-600 hover:bg-indigo-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors inline-block">Sign In</a>
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-bold mb-2">Blog</h1>
-        <p className="text-slate-400 mb-12 text-lg">Investing guides, market analysis, and product updates.</p>
+      <main className="max-w-7xl mx-auto px-6 pt-16 pb-32">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">MarketPulse Blog</h1>
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">Expert guides on stocks, crypto, forex, and financial tools to help you invest smarter.</p>
+        </div>
 
-        <div className="space-y-8">
-          {posts.map((post) => (
-            <article key={post.slug} className="border border-slate-700/50 bg-slate-800/30 rounded-xl p-6 hover:border-indigo-500/50 transition-colors">
-              <Link href={`/blog/${post.slug}`}>
-                <span className="text-xs font-medium text-indigo-400 uppercase tracking-wider">{post.category}</span>
-                <h2 className="text-2xl font-semibold mt-2 mb-3 hover:text-indigo-400 transition-colors">{post.title}</h2>
-                <p className="text-slate-400 mb-4">{post.description}</p>
-                <time className="text-sm text-slate-500">
-                  {new Date(post.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                </time>
-              </Link>
-            </article>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogPosts.map((post) => (
+            <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
+              <article className="bg-slate-800/50 border border-slate-700/50 rounded-xl overflow-hidden hover:border-indigo-500/50 transition-colors">
+                <div className="h-48 flex items-center justify-center p-6" style={{ background: `linear-gradient(135deg, ${post.ogGradient.from}, ${post.ogGradient.to})` }}>
+                  <h3 className="text-lg font-bold text-white text-center leading-snug">{post.title}</h3>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-xs font-medium bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded">{post.category}</span>
+                    <span className="text-xs text-slate-500">{post.readTime}</span>
+                  </div>
+                  <p className="text-sm text-slate-400 line-clamp-3">{post.excerpt}</p>
+                  <div className="mt-4 text-sm text-indigo-400 group-hover:text-indigo-300 transition-colors">Read more &rarr;</div>
+                </div>
+              </article>
+            </Link>
           ))}
         </div>
-      </div>
+      </main>
+
+      <footer className="border-t border-slate-800 py-8">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-sm text-slate-500">
+          <span>MarketPulse 2026. All rights reserved.</span>
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-slate-300 transition-colors">Privacy</a>
+            <a href="#" className="hover:text-slate-300 transition-colors">Terms</a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

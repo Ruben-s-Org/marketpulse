@@ -97,7 +97,7 @@ export default function Home() {
               Get Started Free
             </a>
             <a
-              href="/demo"
+              href="/dashboard?demo=true"
               className="border border-slate-600 hover:border-slate-500 font-medium px-6 py-3 rounded-lg transition-colors text-base text-slate-300 inline-block"
             >
               View Demo
@@ -414,10 +414,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
           <span>MarketPulse 2026. All rights reserved.</span>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-slate-300 transition-colors">
+            <a href="/privacy" className="hover:text-slate-300 transition-colors">
               Privacy
             </a>
-            <a href="#" className="hover:text-slate-300 transition-colors">
+            <a href="/terms" className="hover:text-slate-300 transition-colors">
               Terms
             </a>
           </div>

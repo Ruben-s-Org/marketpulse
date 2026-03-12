@@ -129,8 +129,8 @@ export default function Home() {
         {/* Feature Cards */}
         <section id="features" className="mt-28 sm:mt-32 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-            <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-4 text-green-400 text-lg">
-              $
+            <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-4 text-green-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
             </div>
             <h3 className="text-lg font-semibold mb-2">Real-Time Quotes</h3>
             <p className="text-sm text-slate-400">
@@ -139,8 +139,8 @@ export default function Home() {
             </p>
           </div>
           <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
-            <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center mb-4 text-amber-400 text-lg">
-              !
+            <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center mb-4 text-amber-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             </div>
             <h3 className="text-lg font-semibold mb-2">Smart Alerts</h3>
             <p className="text-sm text-slate-400">

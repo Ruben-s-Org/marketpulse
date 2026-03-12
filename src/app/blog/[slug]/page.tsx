@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: post.title,
       description: post.metaDescription,
     },
+    alternates: { canonical: `https://marketpulse.app/blog/${slug}` },
   };
 }
 
@@ -48,19 +49,31 @@ export default async function BlogPostPage({ params }: PageProps) {
     author: {
       "@type": "Organization",
       name: "MarketPulse",
+      url: "https://marketpulse.app",
     },
     publisher: {
       "@type": "Organization",
       name: "MarketPulse",
+      url: "https://marketpulse.app",
       logo: {
         "@type": "ImageObject",
-        url: "https://marketpulse.com/logo.png",
+        url: "https://marketpulse.app/logo.png",
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://marketpulse.com/blog/${post.slug}`,
+      "@id": `https://marketpulse.app/blog/${post.slug}`,
     },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://marketpulse.app" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://marketpulse.app/blog" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://marketpulse.app/blog/${post.slug}` },
+    ],
   };
 
   return (

@@ -4,16 +4,16 @@ import { verifySessionToken, getSessionTokenFromCookies } from '@/lib/auth';
 
 export const runtime = 'edge';
 
-const PRICE_IDS: Record<string, string> = {
-  pro: 'price_pro',
-  premium: 'price_premium',
-};
-
 export async function POST(request: NextRequest) {
   const { env } = getRequestContext();
   const jwtSecret = env.JWT_SECRET as string;
   const stripeKey = env.STRIPE_SECRET_KEY as string;
   const db = env.DB as D1Database;
+
+  const PRICE_IDS: Record<string, string> = {
+    pro: env.STRIPE_PRO_PRICE_ID as string,
+    premium: env.STRIPE_PREMIUM_PRICE_ID as string,
+  };
 
   const token = getSessionTokenFromCookies(request.headers.get('cookie'));
   if (!token) {

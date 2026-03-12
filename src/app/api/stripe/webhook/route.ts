@@ -96,9 +96,11 @@ export async function POST(request: NextRequest) {
       if (status === 'active') {
         // Subscription is active - retrieve plan from price
         const priceId = subscription.items?.data?.[0]?.price?.id;
+        const proPriceId = env.STRIPE_PRO_PRICE_ID as string;
+        const premiumPriceId = env.STRIPE_PREMIUM_PRICE_ID as string;
         let plan = 'free';
-        if (priceId === 'price_pro') plan = 'pro';
-        else if (priceId === 'price_premium') plan = 'premium';
+        if (priceId === proPriceId) plan = 'pro';
+        else if (priceId === premiumPriceId) plan = 'premium';
 
         await db
           .prepare(

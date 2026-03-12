@@ -58,6 +58,19 @@ CREATE TABLE IF NOT EXISTS watchlist (
   UNIQUE(user_id, symbol, asset_type)
 );
 
+-- Waitlist subscribers for drip campaign
+CREATE TABLE IF NOT EXISTS waitlist (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  subscribed_at TEXT NOT NULL DEFAULT (datetime('now')),
+  last_drip_step INTEGER NOT NULL DEFAULT 0,
+  last_drip_sent_at TEXT,
+  unsubscribed INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_waitlist_email ON waitlist(email);
+CREATE INDEX IF NOT EXISTS idx_waitlist_drip ON waitlist(last_drip_step, unsubscribed);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_alerts_user_id ON alerts(user_id);
 CREATE INDEX IF NOT EXISTS idx_alerts_symbol ON alerts(symbol);

@@ -1,3 +1,5 @@
+import WaitlistForm from "@/components/WaitlistForm";
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white">
@@ -44,17 +46,8 @@ export default function Home() {
             Track stocks, crypto, and forex in real-time. Get AI-powered insights,
             set custom alerts, and manage your portfolio — all in one place.
           </p>
-          <div className="flex gap-4 justify-center">
-            <a
-              href="/api/auth/google"
-              className="bg-indigo-600 hover:bg-indigo-500 font-medium px-6 py-3 rounded-lg transition-colors text-base inline-block"
-            >
-              Get Started Free
-            </a>
-            <button className="border border-slate-600 hover:border-slate-500 font-medium px-6 py-3 rounded-lg transition-colors text-base text-slate-300">
-              View Demo
-            </button>
-          </div>
+          <WaitlistForm />
+          <p className="text-xs text-slate-500 mt-3">Join 500+ investors already on the waitlist. No spam, ever.</p>
         </div>
 
         {/* Feature Cards */}

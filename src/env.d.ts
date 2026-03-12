@@ -9,6 +9,7 @@ interface CloudflareEnv {
   STRIPE_WEBHOOK_SECRET: string;
   STRIPE_PRO_PRICE_ID: string;
   STRIPE_PREMIUM_PRICE_ID: string;
+  RESEND_API_KEY: string;
   ALPHA_VANTAGE_API_KEY: string;
   FINNHUB_API_KEY: string;
   NEWS_API_KEY: string;

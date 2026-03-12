@@ -16,9 +16,12 @@ export default function Home() {
           <a href="#pricing" className="text-sm text-slate-300 hover:text-white transition-colors">
             Pricing
           </a>
-          <button className="bg-indigo-600 hover:bg-indigo-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors">
-            Sign In
-          </button>
+          <a
+            href="/api/auth/google"
+            className="bg-indigo-600 hover:bg-indigo-500 text-sm font-medium px-4 py-2 rounded-lg transition-colors inline-block"
+          >
+            Sign In with Google
+          </a>
         </div>
       </nav>
 
@@ -39,9 +42,12 @@ export default function Home() {
             set custom alerts, and manage your portfolio — all in one place.
           </p>
           <div className="flex gap-4 justify-center">
-            <button className="bg-indigo-600 hover:bg-indigo-500 font-medium px-6 py-3 rounded-lg transition-colors text-base">
+            <a
+              href="/api/auth/google"
+              className="bg-indigo-600 hover:bg-indigo-500 font-medium px-6 py-3 rounded-lg transition-colors text-base inline-block"
+            >
               Get Started Free
-            </button>
+            </a>
             <button className="border border-slate-600 hover:border-slate-500 font-medium px-6 py-3 rounded-lg transition-colors text-base text-slate-300">
               View Demo
             </button>
@@ -97,9 +103,12 @@ export default function Home() {
                 <li>3 price alerts</li>
                 <li>1 portfolio</li>
               </ul>
-              <button className="w-full border border-slate-600 hover:border-slate-500 py-2 rounded-lg text-sm font-medium transition-colors">
+              <a
+                href="/api/auth/google"
+                className="block w-full text-center border border-slate-600 hover:border-slate-500 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
                 Get Started
-              </button>
+              </a>
             </div>
             <div className="bg-indigo-950/50 border-2 border-indigo-500/50 rounded-xl p-6 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-xs font-medium px-3 py-1 rounded-full">
@@ -113,9 +122,12 @@ export default function Home() {
                 <li>Unlimited portfolios</li>
                 <li>Email notifications</li>
               </ul>
-              <button className="w-full bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg text-sm font-medium transition-colors">
+              <a
+                href="/api/auth/google"
+                className="block w-full text-center bg-indigo-600 hover:bg-indigo-500 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
                 Upgrade to Pro
-              </button>
+              </a>
             </div>
             <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6">
               <h3 className="text-lg font-semibold mb-1">Premium</h3>
@@ -126,9 +138,12 @@ export default function Home() {
                 <li>Advanced screeners</li>
                 <li>Priority support</li>
               </ul>
-              <button className="w-full border border-slate-600 hover:border-slate-500 py-2 rounded-lg text-sm font-medium transition-colors">
+              <a
+                href="/api/auth/google"
+                className="block w-full text-center border border-slate-600 hover:border-slate-500 py-2 rounded-lg text-sm font-medium transition-colors"
+              >
                 Go Premium
-              </button>
+              </a>
             </div>
           </div>
         </section>

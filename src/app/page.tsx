@@ -18,6 +18,9 @@ export default function Home() {
           <a href="#pricing" className="text-sm text-slate-300 hover:text-white transition-colors">
             Pricing
           </a>
+          <a href="/tools/currency-converter" className="text-sm text-slate-300 hover:text-white transition-colors">
+            Tools
+          </a>
           <a href="/blog" className="text-sm text-slate-300 hover:text-white transition-colors">
             Blog
           </a>

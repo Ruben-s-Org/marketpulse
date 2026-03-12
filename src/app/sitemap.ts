@@ -13,6 +13,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/pricing`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { url: `${baseUrl}/tools/currency-converter`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${baseUrl}/tools/crypto-calculator`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${baseUrl}/tools/profit-calculator`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
   ];
 
   const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({

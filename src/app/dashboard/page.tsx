@@ -27,7 +27,7 @@ export default function Dashboard() {
         if (!res.ok) throw new Error('Not authenticated');
         return res.json();
       })
-      .then((data) => setUser(data))
+      .then((data) => setUser(data as User))
       .catch(() => (window.location.href = '/'))
       .finally(() => setLoading(false));
   }, []);
@@ -40,7 +40,7 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan }),
       });
-      const data = await res.json();
+      const data = (await res.json()) as { url?: string };
       if (data.url) window.location.href = data.url;
     } catch {
       alert('Failed to start checkout');
@@ -52,7 +52,7 @@ export default function Dashboard() {
   async function handleManageBilling() {
     try {
       const res = await fetch('/api/stripe/portal', { method: 'POST' });
-      const data = await res.json();
+      const data = (await res.json()) as { url?: string };
       if (data.url) window.location.href = data.url;
     } catch {
       alert('Failed to open billing portal');

@@ -40,5 +40,18 @@ export const blogIndexMetadata: Metadata = {
     description: "Free guides on stock screening, crypto trading, and portfolio management.",
     url: "https://marketpulse.app/blog",
     type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "MarketPulse Blog" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "MarketPulse Blog — Investing Tips & Market Analysis",
+    description: "Free guides on stock screening, crypto trading, and portfolio management.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  alternates: { canonical: "https://marketpulse.app/blog" },
 };

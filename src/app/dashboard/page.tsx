@@ -56,6 +56,15 @@ interface ForexData {
 
 type TabType = 'crypto' | 'stocks' | 'forex';
 
+const DEMO_USER: User = {
+  id: 'demo',
+  email: 'demo@example.com',
+  name: 'Demo User',
+  avatar_url: '',
+  plan: 'free' as const,
+  created_at: new Date().toISOString(),
+};
+
 function formatPrice(price: number): string {
   if (price >= 1) return price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
   return '$' + price.toFixed(6);
@@ -96,6 +105,7 @@ function MiniSparkline({ data, positive }: { data: number[]; positive: boolean }
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDemo, setIsDemo] = useState(false);
   const [cryptos, setCryptos] = useState<CryptoAsset[]>([]);
   const [stocks, setStocks] = useState<StockQuote[]>([]);
   const [forex, setForex] = useState<ForexData | null>(null);
@@ -139,6 +149,13 @@ export default function Dashboard() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('checkout') === 'success') setCheckoutStatus('success');
     if (params.get('checkout') === 'cancelled') setCheckoutStatus('cancelled');
+
+    if (params.get('demo') === 'true') {
+      setIsDemo(true);
+      setUser(DEMO_USER);
+      setLoading(false);
+      return;
+    }
 
     fetch('/api/auth/me')
       .then((res) => {
@@ -220,6 +237,16 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white">
+      {/* Demo banner */}
+      {isDemo && (
+        <div className="bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-sm text-center py-2 px-4">
+          You&apos;re viewing the demo.{' '}
+          <a href="/api/auth/google" className="underline font-medium text-white">
+            Sign up free
+          </a>{' '}
+          to save your settings.
+        </div>
+      )}
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto border-b border-slate-800">
         <div className="flex items-center gap-2">
@@ -567,16 +594,18 @@ export default function Dashboard() {
             </p>
             <div className="flex gap-3">
               <button
-                onClick={() => handleUpgrade('pro')}
-                disabled={!!upgrading}
-                className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                onClick={() => !isDemo && handleUpgrade('pro')}
+                disabled={!!upgrading || isDemo}
+                title={isDemo ? 'Sign up to upgrade' : undefined}
+                className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
               >
                 {upgrading === 'pro' ? 'Redirecting...' : 'Pro - $9.99/mo'}
               </button>
               <button
-                onClick={() => handleUpgrade('premium')}
-                disabled={!!upgrading}
-                className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                onClick={() => !isDemo && handleUpgrade('premium')}
+                disabled={!!upgrading || isDemo}
+                title={isDemo ? 'Sign up to upgrade' : undefined}
+                className="bg-amber-600 hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
               >
                 {upgrading === 'premium' ? 'Redirecting...' : 'Premium - $49.99/mo'}
               </button>
@@ -592,8 +621,10 @@ export default function Dashboard() {
               Refresh rate: 30 seconds.
             </p>
             <button
-              onClick={handleManageBilling}
-              className="border border-slate-600 hover:border-slate-500 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              onClick={() => !isDemo && handleManageBilling()}
+              disabled={isDemo}
+              title={isDemo ? 'Sign up to manage billing' : undefined}
+              className="border border-slate-600 hover:border-slate-500 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 rounded-lg text-sm font-medium transition-colors"
             >
               Manage Billing
             </button>

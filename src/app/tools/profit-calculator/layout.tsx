@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/structured-data";
 
 export const metadata: Metadata = {
   title: "Free Investment Profit Calculator — ROI & P&L | MarketPulse",
@@ -41,6 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           }),
         }}
       />
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Tools", url: "/tools" }, { name: "Profit Calculator", url: "/tools/profit-calculator" }]} />
       {children}
     </>
   );

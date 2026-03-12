@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { BreadcrumbSchema } from "@/components/structured-data";
 
 export const metadata: Metadata = {
   title: "Free Currency Converter — Real-Time Exchange Rates | MarketPulse",
@@ -41,6 +42,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           }),
         }}
       />
+      <BreadcrumbSchema items={[{ name: "Home", url: "/" }, { name: "Tools", url: "/tools" }, { name: "Currency Converter", url: "/tools/currency-converter" }]} />
       {children}
     </>
   );

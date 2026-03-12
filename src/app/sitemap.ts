@@ -1,10 +1,25 @@
 import { MetadataRoute } from "next";
+import { readdirSync, readFileSync, statSync } from "fs";
+import { join } from "path";
 
-const blogPosts = [
-  { slug: "best-free-stock-screeners-2026", lastModified: "2026-03-12" },
-  { slug: "how-to-set-up-crypto-price-alerts", lastModified: "2026-03-12" },
-  { slug: "real-time-market-dashboard", lastModified: "2026-03-12" },
-];
+function getBlogSlugs(): { slug: string; lastModified: string }[] {
+  try {
+    const blogDir = join(process.cwd(), "content", "blog");
+    const files = readdirSync(blogDir).filter((f) => f.endsWith(".md"));
+    return files.map((file) => {
+      const slug = file.replace(/\.md$/, "");
+      const filePath = join(blogDir, file);
+      const stat = statSync(filePath);
+      // Try to extract date from frontmatter, fallback to file mtime
+      const raw = readFileSync(filePath, "utf-8");
+      const dateMatch = raw.match(/^date:\s*["']?(\d{4}-\d{2}-\d{2})["']?/m);
+      const lastModified = dateMatch ? dateMatch[1] : stat.mtime.toISOString().split("T")[0];
+      return { slug, lastModified };
+    });
+  } catch {
+    return [];
+  }
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://marketpulse.app";
@@ -12,12 +27,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${baseUrl}/pricing`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${baseUrl}/tools/currency-converter`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/tools/crypto-calculator`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${baseUrl}/tools/profit-calculator`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
   ];
 
+  const blogPosts = getBlogSlugs();
   const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.lastModified),

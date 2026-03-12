@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { GoogleAnalytics } from "@/components/google-analytics";
+import { OrganizationSchema, WebsiteSchema } from "@/components/structured-data";
+import { landingPageMetadata } from "@/lib/metadata";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,26 +16,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata: Metadata = {
-  title: "MarketPulse — Real-Time Financial Intelligence",
-  description:
-    "Track stocks, crypto, and forex in real-time. AI-powered insights, custom alerts, and portfolio tracking. Free to start.",
-  keywords: [
-    "stock market",
-    "crypto prices",
-    "forex rates",
-    "financial dashboard",
-    "portfolio tracker",
-    "price alerts",
-    "market intelligence",
-  ],
-  openGraph: {
-    title: "MarketPulse — Real-Time Financial Intelligence",
-    description:
-      "Track stocks, crypto, and forex in real-time with AI-powered insights.",
-    type: "website",
-  },
-};
+export const metadata: Metadata = landingPageMetadata;
 
 export default function RootLayout({
   children,
@@ -41,9 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <OrganizationSchema />
+        <WebsiteSchema />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GoogleAnalytics />
         {children}
       </body>
     </html>

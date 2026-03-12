@@ -1786,8 +1786,8 @@ socket.onmessage = (event) =&gt; {
 
 ticker = yf.Ticker("AAPL")
 info = ticker.fast_info
-print(f"AAPL price: ${info.last_price:.2f}")
-print(f"Market cap: ${info.market_cap:,.0f}")
+print(f"AAPL price: \${info.last_price:.2f}")
+print(f"Market cap: \${info.market_cap:,.0f}")
 
 # Historical data
 hist = ticker.history(period="1mo")

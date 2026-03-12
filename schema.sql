@@ -64,3 +64,12 @@ CREATE INDEX IF NOT EXISTS idx_alerts_symbol ON alerts(symbol);
 CREATE INDEX IF NOT EXISTS idx_portfolios_user_id ON portfolios(user_id);
 CREATE INDEX IF NOT EXISTS idx_holdings_portfolio_id ON holdings(portfolio_id);
 CREATE INDEX IF NOT EXISTS idx_watchlist_user_id ON watchlist(user_id);
+
+-- Email Waitlist
+CREATE TABLE IF NOT EXISTS email_waitlist (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  source_page TEXT DEFAULT '/',
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_email_waitlist_email ON email_waitlist(email);

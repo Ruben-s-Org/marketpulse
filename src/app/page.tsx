@@ -1,9 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [email, setEmail] = useState('');
+  const [waitlistStatus, setWaitlistStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'exists'>('idle');
+  const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'exists'>('idle');
+
+  useEffect(() => {
+    fetch('/api/waitlist').then(r => r.json()).then((d) => setWaitlistCount((d as { count: number }).count)).catch(() => {});
+  }, []);
+
+  async function handleWaitlist(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    setWaitlistStatus('loading');
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'hero' }),
+      });
+      const data = await res.json() as { alreadyExists?: boolean };
+      setWaitlistStatus(data.alreadyExists ? 'exists' : 'success');
+      if (!data.alreadyExists && waitlistCount !== null) setWaitlistCount(waitlistCount + 1);
+      setEmail('');
+    } catch { setWaitlistStatus('error'); }
+  }
+
+  async function handleNewsletter(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    setNewsletterStatus('loading');
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail, source: 'newsletter' }),
+      });
+      const data = await res.json() as { alreadyExists?: boolean };
+      setNewsletterStatus(data.alreadyExists ? 'exists' : 'success');
+      setNewsletterEmail('');
+    } catch { setNewsletterStatus('error'); }
+  }
 
   const faqs = [
     {
@@ -89,13 +131,30 @@ export default function Home() {
             Track stocks, crypto, and forex in real-time. Get AI-powered insights,
             set custom alerts, and manage your portfolio — all in one place.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/api/auth/google"
-              className="bg-indigo-600 hover:bg-indigo-500 font-medium px-6 py-3 rounded-lg transition-colors text-base inline-block"
-            >
-              Get Started Free
-            </a>
+          <div className="flex flex-col items-center gap-4">
+            <form onSubmit={handleWaitlist} className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="flex-1 px-4 py-3 rounded-lg bg-slate-800/60 border border-slate-700/50 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+              />
+              <button
+                type="submit"
+                disabled={waitlistStatus === 'loading'}
+                className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 font-medium px-6 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
+              >
+                {waitlistStatus === 'loading' ? 'Joining...' : 'Get Early Access'}
+              </button>
+            </form>
+            {waitlistStatus === 'success' && <p className="text-green-400 text-sm mt-2">You&apos;re on the list! We&apos;ll notify you at launch.</p>}
+            {waitlistStatus === 'exists' && <p className="text-indigo-300 text-sm mt-2">You&apos;re already on the list! We&apos;ll be in touch.</p>}
+            {waitlistStatus === 'error' && <p className="text-red-400 text-sm mt-2">Something went wrong. Please try again.</p>}
+            {waitlistCount !== null && waitlistCount > 0 && (
+              <p className="text-sm text-slate-500 mt-3">Join {waitlistCount.toLocaleString()}+ early adopters</p>
+            )}
             <a
               href="/dashboard?demo=true"
               className="border border-slate-600 hover:border-slate-500 font-medium px-6 py-3 rounded-lg transition-colors text-base text-slate-300 inline-block"
@@ -392,19 +451,26 @@ export default function Home() {
           <p className="text-slate-400 mb-8 max-w-lg mx-auto">
             Get weekly market recaps, trending assets, and exclusive insights delivered to your inbox.
           </p>
-          <form action="#" className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form onSubmit={handleNewsletter} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="you@example.com"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              required
               className="flex-1 px-4 py-3 rounded-lg bg-slate-800/60 border border-slate-700/50 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-colors"
             />
             <button
               type="submit"
-              className="bg-indigo-600 hover:bg-indigo-500 font-medium px-6 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
+              disabled={newsletterStatus === 'loading'}
+              className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 font-medium px-6 py-3 rounded-lg transition-colors text-sm whitespace-nowrap"
             >
-              Join Newsletter
+              {newsletterStatus === 'loading' ? 'Joining...' : 'Join Newsletter'}
             </button>
           </form>
+          {newsletterStatus === 'success' && <p className="text-green-400 text-sm mt-2">You&apos;re on the list! We&apos;ll notify you at launch.</p>}
+          {newsletterStatus === 'exists' && <p className="text-indigo-300 text-sm mt-2">You&apos;re already on the list! We&apos;ll be in touch.</p>}
+          {newsletterStatus === 'error' && <p className="text-red-400 text-sm mt-2">Something went wrong. Please try again.</p>}
           <p className="text-xs text-slate-600 mt-3">No spam. Unsubscribe anytime.</p>
         </section>
       </main>
